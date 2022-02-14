@@ -1,6 +1,8 @@
 package com.journaler.api.controller
 
 import com.journaler.api.data.Todo
+import com.journaler.api.service.TodoService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -9,28 +11,16 @@ import java.util.*
 @RequestMapping("/todos")
 class TodoController {
 
+    @Autowired
+    private lateinit var service: TodoService
+
     /**
      * Get todos.
      */
     @GetMapping(
         produces = arrayOf(MediaType.APPLICATION_JSON_VALUE)
     )
-    fun getTodos(): List<Todo> {
-        return listOf(
-            Todo(
-                UUID.randomUUID().toString(),
-                "My first todo",
-                "This is a message for the 1st todo.",
-                System.currentTimeMillis()
-            ),
-            Todo(
-                UUID.randomUUID().toString(),
-                "My second todo",
-                "This is a message for the 2nd todo.",
-                System.currentTimeMillis()
-            )
-        )
-    }
+    fun getTodos(): Iterable<Todo> = service.getTodos()
 
     /**
      * Insert todo.
@@ -42,10 +32,7 @@ class TodoController {
     )
     fun insertTodo(
         @RequestBody todo: Todo
-    ): Todo {
-        todo.id = UUID.randomUUID().toString()
-        return todo
-    }
+    ): Todo = service.insertTodo(todo)
 
     /**
      * Delete todo.
@@ -55,10 +42,7 @@ class TodoController {
         value = ["/{id}"],
         produces = arrayOf(MediaType.APPLICATION_JSON_VALUE)
     )
-    fun deleteTodo(@PathVariable(name = "id") id: String): Boolean {
-        println("Removing: $id")
-        return true
-    }
+    fun deleteTodo(@PathVariable(name = "id") id: String) = service.deleteTodo(id)
 
     /**
      * Update item.
@@ -68,10 +52,5 @@ class TodoController {
         produces = arrayOf(MediaType.APPLICATION_JSON_VALUE),
         consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE)
     )
-    fun updateTodo(@RequestBody todo: Todo): Todo{
-        todo.title += " [updated]"
-        todo.message += " [updated]"
-        todo.schedule = System.currentTimeMillis()
-        return todo
-    }
+    fun updateTodo(@RequestBody todo: Todo) : Todo= service.updateTodo(todo)
 }

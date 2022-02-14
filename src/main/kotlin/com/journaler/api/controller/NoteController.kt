@@ -1,6 +1,8 @@
 package com.journaler.api.controller
 
 import com.journaler.api.data.Note
+import com.journaler.api.service.NoteService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
@@ -10,26 +12,17 @@ import java.util.*
 @RequestMapping("/notes")
 /*@EnableAutoConfiguration*/
 class NoteController {
+
+    @Autowired
+    private lateinit var service: NoteService
+
     /**
      * Get notes.
      */
     @GetMapping(
         produces = arrayOf(MediaType.APPLICATION_JSON_VALUE)
     )
-    fun getNotes(): List<Note> {
-        return listOf(
-            Note(
-                UUID.randomUUID().toString(),
-                "My first note",
-                "This is a message for the 1st note."
-            ),
-            Note(
-                UUID.randomUUID().toString(),
-                "My second note",
-                "This is a message for the 2nd note."
-            )
-        )
-    }
+    fun getNotes() : Iterable<Note> = service.getNotes()
 
     /**
      * Insert note.
@@ -41,10 +34,7 @@ class NoteController {
     )
     fun insertNote(
             @RequestBody note: Note
-    ): Note {
-        note.id = UUID.randomUUID().toString()
-        return note
-    }
+    ) = service.insertNote(note)
 
     /**
      * Remove note by Id.
@@ -54,10 +44,7 @@ class NoteController {
         value = ["/{id}"],
         produces = arrayOf(MediaType.APPLICATION_JSON_VALUE)
     )
-    fun deleteNote(@PathVariable(name = "id") id: String): Boolean {
-        println("Removing: $id")
-        return true
-    }
+    fun deleteNote(@PathVariable(name = "id") id: String) = service.deleteNote(id)
 
     /**
      * Update item.
@@ -67,9 +54,5 @@ class NoteController {
     @PostMapping(
         produces = arrayOf(MediaType.APPLICATION_JSON_VALUE)
     )
-    fun updateNote(@RequestBody note: Note): Note {
-        note.title += " [updated]"
-        note.message += " [updated]"
-        return note
-    }
+    fun updateNote(@RequestBody note: Note) : Note = service.updateNote(note)
 }
