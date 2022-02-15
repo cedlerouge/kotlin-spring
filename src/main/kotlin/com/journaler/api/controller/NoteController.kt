@@ -1,12 +1,10 @@
 package com.journaler.api.controller
 
-import com.journaler.api.data.Note
+import com.journaler.api.data.NoteDTO
 import com.journaler.api.service.NoteService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
-import java.util.*
 
 @RestController
 @RequestMapping("/notes")
@@ -22,7 +20,7 @@ class NoteController {
     @GetMapping(
         produces = arrayOf(MediaType.APPLICATION_JSON_VALUE)
     )
-    fun getNotes() : Iterable<Note> = service.getNotes()
+    fun getNotes() = service.getNotes()
 
     /**
      * Insert note.
@@ -33,7 +31,7 @@ class NoteController {
         consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE)
     )
     fun insertNote(
-            @RequestBody note: Note
+            @RequestBody note: NoteDTO
     ) = service.insertNote(note)
 
     /**
@@ -54,5 +52,17 @@ class NoteController {
     @PostMapping(
         produces = arrayOf(MediaType.APPLICATION_JSON_VALUE)
     )
-    fun updateNote(@RequestBody note: Note) : Note = service.updateNote(note)
+    fun updateNote(@RequestBody note: NoteDTO) : NoteDTO = service.updateNote(note)
+
+    /**
+     * Find note by title
+     */
+    @PostMapping(
+        value = ["/by_title"],
+        produces = arrayOf(MediaType.APPLICATION_JSON_VALUE),
+        consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE)
+    )
+    fun getNoteByTitle(
+        @RequestBody payload: NoteFindByTitleRequest
+    ): Iterable<NoteDTO> = service.findByTitle(payload.title)
 }

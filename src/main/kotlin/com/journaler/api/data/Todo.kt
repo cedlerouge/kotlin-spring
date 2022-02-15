@@ -8,13 +8,9 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-@Table(name = "note")
+@Table(name = "todo")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@NamedQuery(
-    name = "Note.findByTitle",
-    query = "SELECT n FROM Note n WHERE n.title LIKE ?1"
-)
-data class Note (
+data class Todo (
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -22,6 +18,7 @@ data class Note (
     var id: String = "",
     var title: String,
     var message: String,
+    var schedule: Long,
     var location: String = "",
     @CreationTimestamp
     var created: Date = Date(),
@@ -38,7 +35,6 @@ data class Note (
      * org.hibernate.InstantiationException: No default constructor for entity....
      */
     constructor() : this(
-        "", "", "", ""
+        "", "", "", -1, ""
     )
 }
-

@@ -1,6 +1,6 @@
 package com.journaler.api.controller
 
-import com.journaler.api.data.Todo
+import com.journaler.api.data.TodoDTO
 import com.journaler.api.service.TodoService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -20,7 +20,7 @@ class TodoController {
     @GetMapping(
         produces = arrayOf(MediaType.APPLICATION_JSON_VALUE)
     )
-    fun getTodos(): Iterable<Todo> = service.getTodos()
+    fun getTodos(): Iterable<TodoDTO> = service.getTodos()
 
     /**
      * Insert todo.
@@ -31,8 +31,8 @@ class TodoController {
         consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE)
     )
     fun insertTodo(
-        @RequestBody todo: Todo
-    ): Todo = service.insertTodo(todo)
+        @RequestBody todo: TodoDTO
+    ): TodoDTO = service.insertTodo(todo)
 
     /**
      * Delete todo.
@@ -52,5 +52,14 @@ class TodoController {
         produces = arrayOf(MediaType.APPLICATION_JSON_VALUE),
         consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE)
     )
-    fun updateTodo(@RequestBody todo: Todo) : Todo= service.updateTodo(todo)
+    fun updateTodo(@RequestBody todo: TodoDTO) : TodoDTO = service.updateTodo(todo)
+
+    @PostMapping(
+        value = ["later_than"],
+        produces = arrayOf(MediaType.APPLICATION_JSON_VALUE),
+        consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE)
+        )
+    fun getTodosLaterThan(
+        @RequestBody payload:  TodoLaterThanRequest
+    ): Iterable<TodoDTO> = service.getScheduledLaterThan(payload.date)
 }
